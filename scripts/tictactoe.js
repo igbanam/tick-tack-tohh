@@ -16,6 +16,7 @@ var row,
 	draws,
 	storagePrefix,
 	difficulty,
+	next_difficulty = -1,
 	blots,
 	lines;
 
@@ -95,7 +96,12 @@ function resetBoard() {
 	userSpots.splice(0, userSpots.length);
 	gameSpots.splice(0, gameSpots.length);
 	
-	if (difficulty == 0) {
+	if (next_difficulty != -1) {
+		difficulty = next_difficulty;
+	
+		// Store the difficulty in the database
+		localStorage[storagePrefix + 'difficulty'] = difficulty;
+	} else if (difficulty == 0) {
 		difficulty = parseInt($('.selected').attr('id').substr(5));
 	} else {
 		// There is some value for difficulty in the DB
@@ -133,7 +139,7 @@ function registerUserMove(choice) {
 function computerThinks() {
 	if (lines.length > 0) lines.splice(0, lines.length);
 	if (blots.length > 0) blots.splice(0, blots.length);
-	var lookAhead = difficulty;
+	var lookAhead = difficulty - 1;
 	var centre = 0;
 	if (emptySpots == 9) {
 		index = Math.round(Math.random() * board.length);
@@ -262,12 +268,8 @@ function computerThinks() {
 		return (y + step < column) ? row * (x) + (y + step) : centre;
 	}
 	function seekFor(piece) {
-		for (i = 0;
-		i < row;
-		i++) {
-			for (j = 0;
-			j < column;
-			j++) {
+		for (i = 0; i < row; i++) {
+			for (j = 0; j < column; j++) {
 				centre = row * (i) + j;
 				step = 1;
 				if (board[centre] == piece) {
@@ -360,6 +362,7 @@ function gameplay() {
 function gameOver() {
 	return (emptySpots == 0);
 }
+
 function gameWon(playerGrid) {
 	won = false;
 	playerGrid.sort();
@@ -434,17 +437,13 @@ function getInternetExplorerVersion() {
 $(document).ready(function() {
 	initBoard();
 	resetBoard();
-	$(".cell")
-		.click(function() {
+	$(".cell").click(function() {
 		var winner;
 		if (gameOver());
 		else {
-			var freeSpot = registerUserMove(parseInt($(this)
-				.attr("id")
-				.substr(5)));
+			var freeSpot = registerUserMove(parseInt($(this).attr("id").substr(5)));
 			if (freeSpot) {
-				$(this)
-					.append(xImageTag);
+				$(this).append(xImageTag);
 				if (gameWon(userSpots)) {
 					updateRecordsAndInformationPanel(1);
 					return;
@@ -473,18 +472,17 @@ $(document).ready(function() {
 		$(this).addClass('selected');
 		
 		if (emptySpots == 9) {
-			difficulty = parseInt($('.selected')
-				.attr('id')
-				.substr(5));
-		} else {
-			$('#announcement')
-				.text('Click \'New Game\' to effect changes');
-			$('#announcement')
-				.fadeIn('slow');
-		}
+			difficulty = parseInt($('.selected').attr('id').substr(5));
 		
-		// Store the difficulty in the database
-		localStorage[storagePrefix + 'difficulty'] = difficulty;
+			// Store the difficulty in the database
+			localStorage[storagePrefix + 'difficulty'] = difficulty;
+		} else {
+			// Store this choice as a "next difficulty" which would
+			// be used when the game is reset
+			
+			$('#announcement').text('Click \'New Game\' to effect changes');
+			$('#announcement').fadeIn('slow');
+		}
 	});
 	
 	// Ostracize IE
