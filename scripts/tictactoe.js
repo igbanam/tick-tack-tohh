@@ -56,7 +56,7 @@ function initBoard() {
 			wins = 0;
 		}
 		if (localStorage[storagePrefix + 'difficulty']) {
-			difficulty = localStorage[storagePrefix + 'difficulty'];
+			difficulty = parseInt(localStorage[storagePrefix + 'difficulty']);
 		} else {
 			difficulty = 0;
 		}
@@ -80,6 +80,8 @@ function initBoard() {
 	$('#wins').text(wins.toString());
 	$('#losses').text(losses.toString());
 	$('#draws').text(draws.toString());
+	
+	
 }
 
 function resetBoard() {
@@ -93,8 +95,14 @@ function resetBoard() {
 	userSpots.splice(0, userSpots.length);
 	gameSpots.splice(0, gameSpots.length);
 	
-	if (difficulty == 0)
+	if (difficulty == 0) {
 		difficulty = parseInt($('.selected').attr('id').substr(5));
+	} else {
+		// There is some value for difficulty in the DB
+		// Use that to setup the UI for difficulty
+		$('.selected').removeClass('selected');
+		$('#diff-' + difficulty).addClass('selected');
+	}
 		
 	$('#announcement').fadeOut('slow');
 }
@@ -474,6 +482,9 @@ $(document).ready(function() {
 			$('#announcement')
 				.fadeIn('slow');
 		}
+		
+		// Store the difficulty in the database
+		localStorage[storagePrefix + 'difficulty'] = difficulty;
 	});
 	
 	// Ostracize IE
