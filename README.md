@@ -13,7 +13,7 @@ Tick Tack Tohh is my version of the famous Tic Tac Toe game. The game is played 
 
 ###How to play
 
-* Down the [master zip ball](https://github.com/igravity/tick-tack-tohh/archive/master.zip)
+* Download the [master zip ball](https://github.com/igravity/tick-tack-tohh/archive/master.zip)
 * Unzip the file just downloaded
 * open the `index.html` file
 * Enjoy
