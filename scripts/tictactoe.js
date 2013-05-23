@@ -56,7 +56,7 @@ function initBoard() {
 			wins = 0;
 		}
 		if (localStorage[storagePrefix + 'difficulty']) {
-			wins = localStorage[storagePrefix + 'difficulty'];
+			difficulty = localStorage[storagePrefix + 'difficulty'];
 		} else {
 			difficulty = 0;
 		}
@@ -79,6 +79,7 @@ function initBoard() {
 	// UI
 	$('#wins').text(wins.toString());
 	$('#losses').text(losses.toString());
+	$('#draws').text(draws.toString());
 }
 
 function resetBoard() {
@@ -100,9 +101,9 @@ function resetBoard() {
 
 function clearRecords() {
 	if ('localStorage' in window && window['localStorage']!== null) {
-		wins = 0;
+		wins   = 0;
 		losses = 0;
-		draws = 0;
+		draws  = 0;
 		if (localStorage[storagePrefix + 'wins']) 	delete localStorage[storagePrefix + 'wins'];
 		if (localStorage[storagePrefix + 'losses']) delete localStorage[storagePrefix + 'losses'];
 		if (localStorage[storagePrefix + 'draws']) 	delete localStorage[storagePrefix + 'draws'];
@@ -403,14 +404,13 @@ function updateRecordsAndInformationPanel(winner) {
 		localStorage[storagePrefix + 'losses'] = losses;
 		localStorage[storagePrefix + 'draws'] = draws;
 	}
-	$('#wins')
-		.text(wins.toString());
-	$('#losses')
-		.text(losses.toString());
-	$('#draws')
-		.text(draws.toString());
-	if (winner <= 1 && winner >= -1) $('#announcement')
-		.fadeIn(2000);
+	
+	// refresh the scoreboard
+	$('#wins').text(wins.toString());
+	$('#losses').text(losses.toString());
+	$('#draws').text(draws.toString());
+	
+	if (winner <= 1 && winner >= -1) $('#announcement').fadeIn(2000);
 }
 
 function getInternetExplorerVersion() {
@@ -418,12 +418,12 @@ function getInternetExplorerVersion() {
 	if (navigator.appName == 'Microsoft Internet Explorer') {
 		var ua = navigator.userAgent;
 		var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-		if (re.exec(ua)!= null) rv = parseFloat(RegExp.$1);
+		if (re.exec(ua) != null) rv = parseFloat(RegExp.$1);
 	}
 	return rv;
 }
-$(document)
-	.ready(function() {
+
+$(document).ready(function() {
 	initBoard();
 	resetBoard();
 	$(".cell")
@@ -457,13 +457,13 @@ $(document)
 		resetBoard();
 		clearRecords();
 	});
-	$('#difficulty > li')
-		.click(function() {
-		if ($(this) == $('.selected')) return;
-		$('.selected')
-			.removeClass('selected');
-		$(this)
-			.addClass('selected');
+	
+	// Respond to difficulty changes
+	$('#difficulty > li').click(function() {
+		
+		$('.selected').removeClass('selected');
+		$(this).addClass('selected');
+		
 		if (emptySpots == 9) {
 			difficulty = parseInt($('.selected')
 				.attr('id')
@@ -475,6 +475,8 @@ $(document)
 				.fadeIn('slow');
 		}
 	});
+	
+	// Ostracize IE
 	if (getInternetExplorerVersion()!= -1) {
 		document.getElementById('mainNav')
 			.style.display = 'none';
