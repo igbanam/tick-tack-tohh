@@ -22,7 +22,7 @@ Tick Tack Tohh is my version of the famous Tic Tac Toe game. The game is played 
 
 Everyone is welcome to fork and meddle with the code. Send me pull requests for new features you want added to the game.
 
-###How to controbute
+###How to contribute
 
 Open an issue on the Issues page to report a bug or suggest a new feature.
 
