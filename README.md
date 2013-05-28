@@ -18,6 +18,14 @@ Tick Tack Tohh is my version of the famous Tic Tac Toe game. The game is played 
 * open the `index.html` file
 * Enjoy
 
+###TODOs
+
+* Interactive play between human and machine
+* Challenges between two humans
+* Gamification: levelling up, title bouts and so on
+* Account histories
+* Global raking system: This shows you where you stand amongst TicTacToe players around the world.
+
 ###Contributions
 
 Everyone is welcome to fork and meddle with the code. Send me pull requests for new features you want added to the game.
