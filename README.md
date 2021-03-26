@@ -20,7 +20,7 @@ Tick Tack Tohh is my version of the famous Tic Tac Toe game. The game is played 
 
 ### TODOs
 
-* ~~Interactive play between human and machine
+* ~~Interactive play between human and machine~~
 * Challenges between two humans
 * Gamification: levelling up, title bouts and so on
 * Account histories
