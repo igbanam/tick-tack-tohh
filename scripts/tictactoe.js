@@ -20,8 +20,7 @@ var row,
   blots,
   lines;
 
-
-Array.prototype.copyUnique = function() {
+Array.prototype.copyUnique = function () {
   this.sort();
 
   var a = new Array();
@@ -33,7 +32,7 @@ Array.prototype.copyUnique = function() {
     }
   }
   return a;
-}
+};
 
 function initBoard() {
   // Initialize board variables
@@ -47,10 +46,10 @@ function initBoard() {
   board = new Array(row * column);
   xImageTag = "<img src='images/x_pic.png' />";
   oImageTag = "<img src='images/o_pic.png' />";
-  storagePrefix = "ttt_";
+  storagePrefix = 'ttt_';
 
   // Database
-  if ('localStorage' in window && window['localStorage']!== null) {
+  if ('localStorage' in window && window['localStorage'] !== null) {
     if (localStorage[storagePrefix + 'wins']) {
       wins = localStorage[storagePrefix + 'wins'];
     } else {
@@ -87,7 +86,7 @@ function resetBoard() {
   // Clear each cell in the board
   for (i = 0; i < board.length; i++) {
     board[i] = -1;
-    $("#cell-" + (i + 1).toString()).empty();
+    $('#cell-' + (i + 1).toString()).empty();
   }
 
   emptySpots = board.length;
@@ -107,18 +106,18 @@ function resetBoard() {
     $('.selected').removeClass('selected');
     $('#diff-' + difficulty).addClass('selected');
   }
-    
+
   $('#announcement').fadeOut('slow');
 }
 
 function clearRecords() {
-  if ('localStorage' in window && window['localStorage']!== null) {
-    wins   = 0;
+  if ('localStorage' in window && window['localStorage'] !== null) {
+    wins = 0;
     losses = 0;
-    draws  = 0;
-    if (localStorage[storagePrefix + 'wins'])   delete localStorage[storagePrefix + 'wins'];
+    draws = 0;
+    if (localStorage[storagePrefix + 'wins']) delete localStorage[storagePrefix + 'wins'];
     if (localStorage[storagePrefix + 'losses']) delete localStorage[storagePrefix + 'losses'];
-    if (localStorage[storagePrefix + 'draws'])   delete localStorage[storagePrefix + 'draws'];
+    if (localStorage[storagePrefix + 'draws']) delete localStorage[storagePrefix + 'draws'];
     updateRecordsAndInformationPanel(2);
   }
 }
@@ -130,7 +129,7 @@ function registerUserMove(choice) {
     emptySpots = emptySpots - 1;
     return true;
   } else {
-    return false
+    return false;
   }
 }
 
@@ -147,128 +146,120 @@ function computerThinks() {
   }
   if (gameSpots.length > 1) seekFor(gameSpot);
   switch (lookAhead) {
-  case 2:
-    var corners = [0, 2, 6, 8];
-    var cardinals = [1, 3, 5, 7];
-    var centre = 4;
-    if (userSpots.length == 1) {
-      if (board[centre] == 1) {
-        possiblePlays = [1, 3, 7, 9];
-        gameSpot = playFrom(corners);
-        return gameSpot + 1;
-      } else {
-        for (i = 0;
-        i < corners.length;
-        i++) {
-          if (board[corners[i]] == 1) {
+    case 2:
+      var corners = [0, 2, 6, 8];
+      var cardinals = [1, 3, 5, 7];
+      var centre = 4;
+      if (userSpots.length == 1) {
+        if (board[centre] == 1) {
+          possiblePlays = [1, 3, 7, 9];
+          gameSpot = playFrom(corners);
+          return gameSpot + 1;
+        } else {
+          for (i = 0; i < corners.length; i++) {
+            if (board[corners[i]] == 1) {
+              playAt(centre);
+              return centre + 1;
+            }
+          }
+          for (i = 0; i < cardinals.length; i++) {
+            if (board[cardinals[i]] == 1) {
+              gameSpot = playFrom(corners);
+              return gameSpot + 1;
+            }
+          }
+        }
+      } else if (userSpots.length >= 2) {
+        if (centre == 0) {
+          if ((board[0] == 1 && board[8] == 1) || (board[2] == 1 && board[6] == 1)) {
+            gameSpot = playFrom(cardinals);
+            return gameSpot + 1;
+          }
+        }
+        if (board[centre] == -1) {
+          if ((board[0] == 1 && board[8] == 1) || (board[2] == 1 && board[0] == 1)) {
             playAt(centre);
             return centre + 1;
           }
         }
-        for (i = 0;
-        i < cardinals.length;
-        i++) {
-          if (board[cardinals[i]] == 1) {
-            gameSpot = playFrom(corners);
-            return gameSpot + 1;
+        if (board[0] == 1) {
+          if (board[2] == 1 && board[1] == -1) {
+            playAt(1);
+            return 2;
+          }
+          if (board[6] == 1 && board[3] == -1) {
+            playAt(3);
+            return 4;
+          }
+        }
+        if (board[2] == 1) {
+          if (board[0] == 1 && board[1] == -1) {
+            playAt(1);
+            return 2;
+          }
+          if (board[8] == 1 && board[5] == -1) {
+            playAt(5);
+            return 6;
+          }
+        }
+        if (board[6] == 1) {
+          if (board[0] == 1 && board[3] == -1) {
+            playAt(3);
+            return 4;
+          }
+          if (board[8] == 1 && board[7] == -1) {
+            playAt(7);
+            return 8;
+          }
+        }
+        if (board[8] == 1) {
+          if (board[2] == 1 && board[5] == -1) {
+            playAt(5);
+            return 6;
+          }
+          if (board[6] == 1 && board[7] == -1) {
+            playAt(7);
+            return 8;
           }
         }
       }
-    } else if (userSpots.length >= 2) {
-      if (centre == 0) {
-        if ((board[0] == 1 && board[8] == 1) || (board[2] == 1 && board[6] == 1)) {
-          gameSpot = playFrom(cardinals);
-          return gameSpot + 1;
+    case 1:
+      seekFor(userSpot);
+      if (lines.length > 0) {
+        gameSpot = playFrom(lines);
+        return gameSpot + 1;
+      } else if (blots.length > 0) {
+        gameSpot = playFrom(blots);
+        return gameSpot + 1;
+      }
+    case 0:
+    default:
+      for (i = 0; i < row; i++) {
+        for (j = 0; j < column; j++) {
+          spot = row * i + j;
+          if (board[spot] == -1) {
+            playAt(spot);
+            return spot + 1;
+          }
         }
       }
-      if (board[centre] == -1) {
-        if ((board[0] == 1 && board[8] == 1) || (board[2] == 1 && board[0] == 1)) {
-          playAt(centre);
-          return centre + 1;
-        }
-      }
-      if (board[0] == 1) {
-        if (board[2] == 1 && board[1] == -1) {
-          playAt(1);
-          return 2;
-        }
-        if (board[6] == 1 && board[3] == -1) {
-          playAt(3);
-          return 4;
-        }
-      }
-      if (board[2] == 1) {
-        if (board[0] == 1 && board[1] == -1) {
-          playAt(1);
-          return 2;
-        }
-        if (board[8] == 1 && board[5] == -1) {
-          playAt(5);
-          return 6;
-        }
-      }
-      if (board[6] == 1) {
-        if (board[0] == 1 && board[3] == -1) {
-          playAt(3);
-          return 4;
-        }
-        if (board[8] == 1 && board[7] == -1) {
-          playAt(7);
-          return 8;
-        }
-      }
-      if (board[8] == 1) {
-        if (board[2] == 1 && board[5] == -1) {
-          playAt(5);
-          return 6;
-        }
-        if (board[6] == 1 && board[7] == -1) {
-          playAt(7);
-          return 8;
-        }
-      }
-    }
-  case 1:
-    seekFor(userSpot);
-    if (lines.length > 0) {
-      gameSpot = playFrom(lines);
-      return gameSpot + 1;
-    } else if (blots.length > 0) {
-      gameSpot = playFrom(blots);
-      return gameSpot + 1;
-    }
-  case 0:
-  default:
-    for (i = 0;
-    i < row;
-    i++) {
-      for (j = 0;
-      j < column;
-      j++) {
-        spot = row * (i) + j;
-        if (board[spot] == -1) {
-          playAt(spot);
-          return spot + 1;
-        }
-      }
-    }
   }
   function goUp(x, y, step) {
-    return (x - step >= 0) ? row * (x - step) + y : centre;
+    return x - step >= 0 ? row * (x - step) + y : centre;
   }
   function goLeft(x, y, step) {
-    return (y - step >= 0) ? row * (x) + (y - step) : centre;
+    return y - step >= 0 ? row * x + (y - step) : centre;
   }
   function goDown(x, y, step) {
-    return (x + step < row) ? row * (x + step) + y : centre;
+    return x + step < row ? row * (x + step) + y : centre;
   }
   function goRight(x, y, step) {
-    return (y + step < column) ? row * (x) + (y + step) : centre;
+    return y + step < column ? row * x + (y + step) : centre;
   }
   function seekFor(piece) {
     for (i = 0; i < row; i++) {
       for (j = 0; j < column; j++) {
-        centre = row * (i) + j;
+        centre = row * i + j;
         step = 1;
         if (board[centre] == piece) {
           seekCardinal(i, j, step, goLeft, piece);
@@ -285,17 +276,17 @@ function computerThinks() {
   }
   function seekCorner(x, y, range, func1, func2, lookingFor) {
     if (func1 == func2) {
-      alert("The CPU has been handicapped!");
+      alert('The CPU has been handicapped!');
       return -1;
     }
     firstStepNear = func1(x, y, range);
     firstStepNear_x = Math.floor(firstStepNear / row);
     firstStepNear_y = firstStepNear % row;
     secondStepNear = func2(firstStepNear_x, firstStepNear_y, range);
-    if (secondStepNear!= centre) {
+    if (secondStepNear != centre) {
       if (board[secondStepNear] == lookingFor) {
         firstStepFar = func1(i, j, range + 1);
-        if (firstStepFar!= centre) {
+        if (firstStepFar != centre) {
           firstStepFar_x = Math.floor(firstStepFar / row);
           firstStepFar_y = firstStepFar % column;
           secondStepFar = func2(firstStepFar_x, firstStepFar_y, range + 1);
@@ -310,7 +301,7 @@ function computerThinks() {
   }
   function seekCardinal(x, y, range, func, lookingFor) {
     near = func(x, y, range);
-    if (near!= centre) {
+    if (near != centre) {
       if (board[near] == lookingFor) {
         far = func(x, y, range + 1);
         if (board[far] == -1) {
@@ -345,9 +336,9 @@ function computerThinks() {
 
 function gameplay() {
   var o_spot = computerThinks();
-  $("#cell-" + o_spot.toString())
+  $('#cell-' + o_spot.toString())
     .append(oImageTag)
-    .addClass("cell");
+    .addClass('cell');
   if (gameWon(gameSpots)) {
     updateRecordsAndInformationPanel(0);
     return;
@@ -358,7 +349,7 @@ function gameplay() {
 }
 
 function gameOver() {
-  return (emptySpots == 0);
+  return emptySpots == 0;
 }
 
 function gameWon(playerGrid) {
@@ -366,19 +357,15 @@ function gameWon(playerGrid) {
   playerGrid.sort();
   if (playerGrid.length >= 3) {
     position = 0;
-    for (position;
-    playerGrid.length;
-    position = position + 1) {
+    for (position; playerGrid.length; position = position + 1) {
       if (playerGrid.length - position < row) break;
       winningRow = x = Math.floor(playerGrid[position] / row);
       winningColumn = y = playerGrid[position] % row;
       verticalCount = 1;
       horizontalCount = 1;
-      positiveDiagonalCount = (x == y) ? 1 : 0;
-      negativeDiagonalCount = (row - x - 1 == y) ? 1 : 0;
-      for (streak = position + 1;
-      streak < playerGrid.length;
-      streak++) {
+      positiveDiagonalCount = x == y ? 1 : 0;
+      negativeDiagonalCount = row - x - 1 == y ? 1 : 0;
+      for (streak = position + 1; streak < playerGrid.length; streak++) {
         x = Math.floor(playerGrid[streak] / row);
         y = playerGrid[streak] % row;
         if (x == winningRow) horizontalCount++;
@@ -386,7 +373,13 @@ function gameWon(playerGrid) {
         if (x == y) positiveDiagonalCount++;
         if (row - x - 1 == y) negativeDiagonalCount++;
       }
-      if (verticalCount == 3 || horizontalCount == 3 || positiveDiagonalCount == 3 || negativeDiagonalCount == 3) return true;
+      if (
+        verticalCount == 3 ||
+        horizontalCount == 3 ||
+        positiveDiagonalCount == 3 ||
+        negativeDiagonalCount == 3
+      )
+        return true;
     }
   }
   return false;
@@ -396,19 +389,16 @@ function updateRecordsAndInformationPanel(winner) {
   if (winner == 1) {
     wins++;
     emptySpots = 0;
-    $('#announcement')
-      .text('You win !');
+    $('#announcement').text('You win !');
   } else if (winner == 0) {
     losses++;
     emptySpots = 0;
-    $('#announcement')
-      .text('You lose :(');
+    $('#announcement').text('You lose :(');
   } else if (winner == -1) {
     draws++;
-    $('#announcement')
-      .text('It\'s a tie ( ._.)');
+    $('#announcement').text("It's a tie ( ._.)");
   }
-  if ('localStorage' in window && window['localStorage']!== null) {
+  if ('localStorage' in window && window['localStorage'] !== null) {
     localStorage[storagePrefix + 'wins'] = wins;
     localStorage[storagePrefix + 'losses'] = losses;
     localStorage[storagePrefix + 'draws'] = draws;
@@ -426,20 +416,20 @@ function getInternetExplorerVersion() {
   var rv = -1;
   if (navigator.appName == 'Microsoft Internet Explorer') {
     var ua = navigator.userAgent;
-    var re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+    var re = new RegExp('MSIE ([0-9]{1,}[.0-9]{0,})');
     if (re.exec(ua) != null) rv = parseFloat(RegExp.$1);
   }
   return rv;
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
   initBoard();
   resetBoard();
-  $(".cell").click(function() {
+  $('.cell').click(function () {
     var winner;
     if (gameOver());
     else {
-      var freeSpot = registerUserMove(parseInt($(this).attr("id").substr(5)));
+      var freeSpot = registerUserMove(parseInt($(this).attr('id').substr(5)));
       if (freeSpot) {
         $(this).append(xImageTag);
         if (gameWon(userSpots)) {
@@ -449,23 +439,20 @@ $(document).ready(function() {
           updateRecordsAndInformationPanel(-1);
           return;
         }
-        thinkTime = setTimeout("gameplay()", difficulty * 200);
+        thinkTime = setTimeout('gameplay()', difficulty * 200);
       }
     }
   });
-  $('#mainNav li[name = new game]')
-    .click(function() {
+  $('#mainNav li[name = new game]').click(function () {
     resetBoard();
   });
-  $('#mainNav li[name = reset]')
-    .click(function() {
+  $('#mainNav li[name = reset]').click(function () {
     resetBoard();
     clearRecords();
   });
 
   // Respond to difficulty changes
-  $('#difficulty > li').click(function() {
-
+  $('#difficulty > li').click(function () {
     $('.selected').removeClass('selected');
     $(this).addClass('selected');
 
@@ -478,31 +465,23 @@ $(document).ready(function() {
       // Store this choice as a "next difficulty" which would
       // be used when the game is reset
 
-      $('#announcement').text('Click \'New Game\' to effect changes');
+      $('#announcement').text("Click 'New Game' to effect changes");
       $('#announcement').fadeIn('slow');
     }
   });
 
   // Ostracize IE
-  if (getInternetExplorerVersion()!= -1) {
-    document.getElementById('mainNav')
-      .style.display = 'none';
-    document.getElementById('itsme')
-      .style.display = 'none';
-    document.getElementById('itsmeagain')
-      .style.display = 'none';
-    document.getElementById('container')
-      .style.display = 'none';
-    document.getElementById('mmenu1')
-      .style.display = 'none';
-    document.getElementById('mmenu2')
-      .style.display = 'none';
-    $('#inyourface')
-      .text("Download Chrome, Firefox or Safari.")
-      .css({
-      'font': 'bold',
-      'color': 'white',
-      'border': '2px solid red',
+  if (getInternetExplorerVersion() != -1) {
+    document.getElementById('mainNav').style.display = 'none';
+    document.getElementById('itsme').style.display = 'none';
+    document.getElementById('itsmeagain').style.display = 'none';
+    document.getElementById('container').style.display = 'none';
+    document.getElementById('mmenu1').style.display = 'none';
+    document.getElementById('mmenu2').style.display = 'none';
+    $('#inyourface').text('Download Chrome, Firefox or Safari.').css({
+      font: 'bold',
+      color: 'white',
+      border: '2px solid red',
       'font-size': '40px'
     });
   }
