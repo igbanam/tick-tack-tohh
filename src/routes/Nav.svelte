@@ -1,9 +1,16 @@
 <script>
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
+
+  function sendResetEvent() {
+    dispatch('ttt_reset')
+  }
 </script>
 
 <nav id="mainNav">
   <li id="mmenu1" name="new game">New Game</li>
-  <li id="mmenu2" name="reset">Reset</li>
+  <li id="mmenu2" name="reset" on:click={sendResetEvent} on:keydown={sendResetEvent}>Reset</li>
 </nav>
 
 <style>

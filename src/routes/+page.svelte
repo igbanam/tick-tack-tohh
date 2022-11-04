@@ -3,6 +3,10 @@
   import Cell from './Cell.svelte'
 
   let playzone
+
+  function resetBoard() {
+    document.querySelectorAll('.cell').forEach((n) => n.innerHTML = '')
+  }
 </script>
 
 <svelte:head>
@@ -10,7 +14,7 @@
   <meta name="description" content="Tick Tack Tohh by @yaasky" />
 </svelte:head>
 
-<Nav />
+<Nav on:ttt_reset={resetBoard} />
 
 <div id="container">
   <section id="playZone" bind:this="{playzone}">
