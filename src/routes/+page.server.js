@@ -5,7 +5,13 @@ import o_pic from '../lib/images/o_pic.png'
 export const load = ({ cookies }) => {
   const game = new TTT(cookies.get('ttt'))
   game.reset()
-}
+
+  return {
+    wins: game.wins,
+    losses: game.losses,
+    ties: game.ties
+  };
+};
 
 class TTT {
   /**
@@ -14,19 +20,26 @@ class TTT {
    */
   constructor(serialized) {
     if (serialized) {
+      const stats = serialized.split('-')
       this.board = new Board()
       this.spots = {
         'cpu': [],
         'user': []
       }
+      this.wins = stats[0]
+      this.ties = stats[1]
+      this.losses = stats[2]
     } else {
       this.board = new Board()
 
-      /* @type {Object.<String, Array>} */
       this.spots = {
         'cpu': [],
         'user': []
       }
+
+      this.wins = 0
+      this.ties = 0
+      this.losses = 0
     }
   }
 
@@ -34,10 +47,12 @@ class TTT {
    * Wipe the board clean.
    */
   reset() {
-    // document.querySelectorAll('.cell').forEach((n) => n.innerHTML = '')
     this.emptySpots = this.board.length
     Object.values(this.spots).forEach((s) => s.splice(0, s.length))
+  }
 
+  serialize() {
+    return `${this.wins}-${this.ties}-${this.losses}`
   }
 }
 
