@@ -1,30 +1,33 @@
 <script>
-  import Nav from './Nav.svelte';
+  import Nav from './Nav.svelte'
+  import Cell from './Cell.svelte'
+
+  let playzone
 </script>
 
 <svelte:head>
-  <title>Home</title>
-  <meta name="description" content="Svelte demo app" />
+  <title>Tick Tack Tohh</title>
+  <meta name="description" content="Tick Tack Tohh by @yaasky" />
 </svelte:head>
 
 <Nav />
 
 <div id="container">
-  <section id="playZone">
+  <section id="playZone" bind:this="{playzone}">
     <div class="row">
-      <div class="cell" id="cell-1"></div>
-      <div class="cell" id="cell-2"></div>
-      <div class="cell" id="cell-3"></div>
+      <Cell id="cell-1" />
+      <Cell id="cell-2" />
+      <Cell id="cell-3" last=true />
     </div>
     <div class="row">
-      <div class="cell" id="cell-4"></div>
-      <div class="cell" id="cell-5"></div>
-      <div class="cell" id="cell-6"></div>
+      <Cell id="cell-4" />
+      <Cell id="cell-5" />
+      <Cell id="cell-6" last=true />
     </div>
     <div class="row">
-      <div class="cell" id="cell-7"></div>
-      <div class="cell" id="cell-8"></div>
-      <div class="cell" id="cell-9"></div>
+      <Cell id="cell-7" />
+      <Cell id="cell-8" />
+      <Cell id="cell-9" last=true />
     </div>
   </section>
 
@@ -75,17 +78,6 @@ section {
 }
 .row:first-child {
   border-top: none;
-}
-.cell {
-  border-right: 2px solid #cc6;
-  width: 130px;
-  height: 130px;
-  float: left;
-  text-align: center;
-  vertical-align: bottom;
-}
-.row > .cell:last-child {
-  border-right: none;
 }
 aside {
   float: right;
