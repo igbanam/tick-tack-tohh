@@ -1,5 +1,23 @@
 <script>
+  import { fade } from 'svelte/transition';
   export let wins, ties, losses
+
+  let announcement_visible = false
+  let announcement_text
+  let banners = {
+    win: "You win !",
+    loss: "You lose :(",
+    tie: "It's a tie ( ._.)"
+  }
+
+  export function announce(outcome) {
+    announcement_text = banners[outcome]
+    announcement_visible = true
+  }
+
+  export function denounce() {
+    announcement_visible = false
+  }
 </script>
 
 <section id="information">
@@ -7,7 +25,9 @@
   <p>Wins: <span id="wins">{wins}</span></p>
   <p>Losses: <span id="losses">{losses}</span></p>
   <p>Ties: <span id="ties">{ties}</span></p>
-  <p id="announcement">You win!</p>
+  {#if announcement_visible}
+    <p transition:fade id="announcement">{announcement_text}</p>
+  {/if}
 </section>
 
 <style>
@@ -44,6 +64,6 @@
     border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
-    display: none;
+    /* display: none; */
   }
 </style>

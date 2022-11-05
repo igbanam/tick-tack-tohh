@@ -6,11 +6,15 @@
   function sendResetEvent() {
     dispatch('ttt_reset')
   }
+
+  function sendNewEvent() {
+    dispatch('ttt_new')
+  }
 </script>
 
 <nav id="mainNav">
-  <li id="mmenu1" name="new game">New Game</li>
-  <li id="mmenu2" name="reset" on:click={sendResetEvent} on:keydown={sendResetEvent}>Reset</li>
+  <li on:click={sendNewEvent} on:keydown={sendNewEvent}>New Game</li>
+  <li on:click={sendResetEvent} on:keydown={sendResetEvent}>Reset</li>
 </nav>
 
 <style>

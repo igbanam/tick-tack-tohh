@@ -23,9 +23,28 @@
   /** The state of the board */
   $: board = data.board
 
-  function resetBoard() {
-    document.querySelectorAll('.cell').forEach((n) => n.innerHTML = '')
+  /** Are all cells played out? */
+  $: full_board = !data.board.some(cell => cell === '_')
+
+  let scores
+  const denounce = () => scores.denounce()
+  const announce = (outcome) => scores.announce(outcome)
+
+  function resetGame() {
+    clearGame()
     wins = losses = ties = 0
+  }
+
+  function newGame() {
+    clearGame()
+  }
+
+  function clearGame() {
+    document.querySelectorAll('.cell').forEach((n) => n.innerHTML = '')
+    denounce()
+    board.splice(0)
+    board = new Array(9)
+    board.fill('_')
   }
 
   function changeDifficulty(e) {
@@ -35,18 +54,57 @@
   function play(e) {
     board[e.detail.position] = 'x'
     if (won()) {
-      console.log("Gameover")
+      let winner = lines().find(in_win_form)[0]
+      if (winner === 'x') {
+        wins += 1
+        announce('win')
+      } else {
+        losses += 1
+        announce('loss')
+      }
+    } else if (full_board) {
+      ties += 1
+      announce('tie')
     } else {
-      let cpu_move = think()
-      updateCell({where: cpu_move})
+      cpu_play()
+    }
+  }
+
+  function cpu_play() {
+    let cpu_move = think()
+    updateCell({where: cpu_move})
+    if (won()) {
+      let winner = lines().find(in_win_form)[0]
+      if (winner === 'x') {
+        wins += 1
+        announce('win')
+      } else {
+        losses += 1
+        announce('loss')
+      }
+    } else if (full_board) {
+      ties += 1
+      announce('tie')
     }
   }
 
   function won() {
-    return [horizontals(), verticals(), diagonals()].flat().some(in_win_form)
+    return lines().some(in_win_form)
   }
 
-  const in_win_form = (e) => e.join('') === 'xxx'
+  /**
+   * Lines on the board we care about
+   * @returns {Array}
+   */
+  function lines() {
+    return [
+      horizontals(),
+      verticals(),
+      diagonals()
+    ].flat()
+  }
+
+  const in_win_form = (line) => line.every(cell => cell === line[0] && !line.some(cell => cell === '_'))
 
   function horizontals() {
     return [
@@ -90,7 +148,7 @@
   <meta name="description" content="Tick Tack Tohh by @yaasky" />
 </svelte:head>
 
-<Nav on:ttt_reset={resetBoard} />
+<Nav on:ttt_reset={resetGame} on:ttt_new={newGame} />
 
 <div id="container">
   <section id="playZone">
@@ -112,7 +170,7 @@
   </section>
 
   <aside>
-    <Scores wins={wins} ties={ties} losses={losses} />
+    <Scores bind:this={scores} wins={wins} ties={ties} losses={losses} />
 
     <Levels on:ttt_difficulty={changeDifficulty} />
   </aside>
