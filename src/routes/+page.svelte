@@ -23,12 +23,11 @@
   /** The state of the board */
   $: board = data.board
 
-  /** Are all cells played out? */
-  $: full_board = !data.board.some(cell => cell === '_')
-
   let scores
   const denounce = () => scores.denounce()
   const announce = (outcome) => scores.announce(outcome)
+
+  let new_difficulty = 0
 
   function resetGame() {
     clearGame()
@@ -37,6 +36,9 @@
 
   function newGame() {
     clearGame()
+    if (new_difficulty > 0) {
+      difficulty = new_difficulty
+    }
   }
 
   function clearGame() {
@@ -45,10 +47,12 @@
     board.splice(0)
     board = new Array(9)
     board.fill('_')
+    difficulty = 1
   }
 
   function changeDifficulty(e) {
-    difficulty = e.detail.level
+    new_difficulty = e.detail.level
+    announce('difficulty_change')
   }
 
   function play(e) {
@@ -62,7 +66,7 @@
         losses += 1
         announce('loss')
       }
-    } else if (full_board) {
+    } else if (full_board()) {
       ties += 1
       announce('tie')
     } else {
@@ -71,7 +75,7 @@
   }
 
   function cpu_play() {
-    let cpu_move = think()
+    let cpu_move = think(difficulty)
     updateCell({where: cpu_move})
     if (won()) {
       let winner = lines().find(in_win_form)[0]
@@ -82,7 +86,7 @@
         losses += 1
         announce('loss')
       }
-    } else if (full_board) {
+    } else if (full_board()) {
       ties += 1
       announce('tie')
     }
@@ -104,6 +108,7 @@
     ].flat()
   }
 
+  const full_board = () => !board.some(cell => cell === '_')
   const in_win_form = (line) => line.every(cell => cell === line[0] && !line.some(cell => cell === '_'))
 
   function horizontals() {
@@ -131,11 +136,11 @@
 
   function think() {
     let decision = board.findIndex((element) => element === '_')
-    board[decision] = 'o'
     return decision
   }
 
   function updateCell({ where }) {
+    board[where] = 'o'
     let choice_node = [...document.querySelectorAll('.cell')].findLast((node) => node.id == `${where}`)
     const o = document.createElement('img')
     o.src = o_pic

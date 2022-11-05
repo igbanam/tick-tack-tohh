@@ -7,7 +7,8 @@
   let banners = {
     win: "You win !",
     loss: "You lose :(",
-    tie: "It's a tie ( ._.)"
+    tie: "It's a tie ( ._.)",
+    difficulty_change: "Click 'New Game' to effect changes"
   }
 
   export function announce(outcome) {
