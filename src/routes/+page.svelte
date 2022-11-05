@@ -3,8 +3,7 @@
   import Cell from './Cell.svelte'
   import Scores from './Scores.svelte'
   import Levels from './Levels.svelte'
-
-  let playzone
+  import o_pic from '$lib/images/o_pic.png'
 
   /** @type {import('./$types').PageData} */
   export let data
@@ -21,6 +20,9 @@
   /** How hard should CPU go in!!! */
   $: difficulty = data.difficulty
 
+  /** The state of the board */
+  $: board = data.board
+
   function resetBoard() {
     document.querySelectorAll('.cell').forEach((n) => n.innerHTML = '')
     wins = losses = ties = 0
@@ -28,6 +30,58 @@
 
   function changeDifficulty(e) {
     difficulty = e.detail.level
+  }
+
+  function play(e) {
+    board[e.detail.position] = 'x'
+    if (won()) {
+      console.log("Gameover")
+    } else {
+      let cpu_move = think()
+      updateCell({where: cpu_move})
+    }
+  }
+
+  function won() {
+    return [horizontals(), verticals(), diagonals()].flat().some(in_win_form)
+  }
+
+  const in_win_form = (e) => e.join('') === 'xxx'
+
+  function horizontals() {
+    return [
+      board.slice(0, 3),
+      board.slice(3, 6),
+      board.slice(6)
+    ]
+  }
+
+  function verticals() {
+    return [
+      [board[0], board[3], board[6]],
+      [board[1], board[4], board[7]],
+      [board[2], board[5], board[8]],
+    ]
+  }
+
+  function diagonals() {
+    return [
+      [board[0], board[4], board[8]],
+      [board[2], board[4], board[6]],
+    ]
+  }
+
+  function think() {
+    let decision = board.findIndex((element) => element === '_')
+    board[decision] = 'o'
+    return decision
+  }
+
+  function updateCell({ where }) {
+    let choice_node = [...document.querySelectorAll('.cell')].findLast((node) => node.id == `${where}`)
+    const o = document.createElement('img')
+    o.src = o_pic
+    choice_node.appendChild(o)
   }
 </script>
 
@@ -39,21 +93,21 @@
 <Nav on:ttt_reset={resetBoard} />
 
 <div id="container">
-  <section id="playZone" bind:this="{playzone}">
+  <section id="playZone">
     <div class="row">
-      <Cell id="cell-1" />
-      <Cell id="cell-2" />
-      <Cell id="cell-3" last=true />
+      <Cell on:ttt_move={play} id="0" />
+      <Cell on:ttt_move={play} id="1" />
+      <Cell on:ttt_move={play} id="2" last=true />
     </div>
     <div class="row">
-      <Cell id="cell-4" />
-      <Cell id="cell-5" />
-      <Cell id="cell-6" last=true />
+      <Cell on:ttt_move={play} id="3" />
+      <Cell on:ttt_move={play} id="4" />
+      <Cell on:ttt_move={play} id="5" last=true />
     </div>
     <div class="row">
-      <Cell id="cell-7" />
-      <Cell id="cell-8" />
-      <Cell id="cell-9" last=true />
+      <Cell on:ttt_move={play} id="6" />
+      <Cell on:ttt_move={play} id="7" />
+      <Cell on:ttt_move={play} id="8" last=true />
     </div>
   </section>
 

@@ -1,6 +1,11 @@
 <script>
   import x_pic from '$lib/images/x_pic.png'
-  import o_pic from '$lib/images/o_pic.png'
+  /* import o_pic from '$lib/images/o_pic.png' */
+
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
+
   export let id, last = false
 
   function placeIcon(e) {
@@ -9,6 +14,10 @@
     const x = document.createElement('img')
     x.src = x_pic
     node.appendChild(x)
+
+    dispatch('ttt_move', {
+      position: e.target.id
+    })
   }
 </script>
 

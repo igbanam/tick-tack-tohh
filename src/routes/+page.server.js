@@ -9,7 +9,9 @@ export const load = ({ cookies }) => {
   return {
     wins: game.wins,
     losses: game.losses,
-    ties: game.ties
+    ties: game.ties,
+    difficulty: game.difficulty,
+    board: game.board
   };
 };
 
@@ -20,16 +22,17 @@ class TTT {
    */
   constructor(serialized) {
     if (serialized) {
-      const stats = serialized.split('-')
+      const from_cookie = serialized.split('-')
       this.board = new Board()
       this.spots = {
         'cpu': [],
         'user': []
       }
-      this.wins = stats[0]
-      this.ties = stats[1]
-      this.losses = stats[2]
-      this.difficulty = stats[3]
+      this.wins = from_cookie[0]
+      this.ties = from_cookie[1]
+      this.losses = from_cookie[2]
+      this.difficulty = from_cookie[3]
+      this.board = from_cookie[4].split('+')
     } else {
       this.board = new Board()
 
@@ -42,6 +45,8 @@ class TTT {
       this.ties = 0
       this.losses = 0
       this.difficulty = 1
+      this.board = new Array(9)
+      this.board.fill('_')
     }
   }
 
@@ -54,7 +59,7 @@ class TTT {
   }
 
   serialize() {
-    return `${this.wins}-${this.ties}-${this.losses}-${this.difficulty}`
+    return `${this.wins}-${this.ties}-${this.losses}-${this.difficulty}-${this.board.join('+')}`
   }
 }
 
