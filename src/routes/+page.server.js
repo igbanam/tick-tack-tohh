@@ -29,6 +29,7 @@ class TTT {
       this.wins = stats[0]
       this.ties = stats[1]
       this.losses = stats[2]
+      this.difficulty = stats[3]
     } else {
       this.board = new Board()
 
@@ -40,6 +41,7 @@ class TTT {
       this.wins = 0
       this.ties = 0
       this.losses = 0
+      this.difficulty = 1
     }
   }
 
@@ -52,7 +54,7 @@ class TTT {
   }
 
   serialize() {
-    return `${this.wins}-${this.ties}-${this.losses}`
+    return `${this.wins}-${this.ties}-${this.losses}-${this.difficulty}`
   }
 }
 
