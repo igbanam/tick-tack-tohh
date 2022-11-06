@@ -104,39 +104,40 @@
    */
   function lines() {
     return [
-      horizontals(),
-      verticals(),
-      diagonals()
+      Object.values(horizontals()),
+      Object.values(verticals()),
+      Object.values(diagonals())
     ].flat()
   }
 
   const to_2d = (i) => ({x: i % 3, y: Math.floor(i / 3)})
   const to_1d = (x, y) => x + 3 * y
   const full_board = () => !board.some(cell => cell === '_')
-  const almost_win = (line) => line.filter((cell) => cell === '_').length == 2
+  const almost_lost = () => lines().some(lose_potential)
+  const lose_potential = (line) => !line.some((cell) => cell === 'o') && line.filter((cell) => cell === 'x').length == 2
   const in_win_form = (line) => line.every(cell => cell === line[0] && !line.some(cell => cell === '_'))
 
   function horizontals() {
-    return [
-      board.slice(0, 3),
-      board.slice(3, 6),
-      board.slice(6)
-    ]
+    return {
+      h1: board.slice(0, 3),
+      h2: board.slice(3, 6),
+      h3: board.slice(6)
+    }
   }
 
   function verticals() {
-    return [
-      [board[0], board[3], board[6]],
-      [board[1], board[4], board[7]],
-      [board[2], board[5], board[8]],
-    ]
+    return {
+      v1: [board[0], board[3], board[6]],
+      v2: [board[1], board[4], board[7]],
+      v3: [board[2], board[5], board[8]],
+    }
   }
 
   function diagonals() {
-    return [
-      [board[0], board[4], board[8]],
-      [board[2], board[4], board[6]],
-    ]
+    return {
+      d1: [board[0], board[4], board[8]],
+      d2: [board[2], board[4], board[6]],
+    }
   }
 
   function look_around(last_played) {
@@ -192,6 +193,43 @@
     return getAllIndexes(board, '_')
   }
 
+  /**
+   * Ensure the player does not win on this line
+   * @param {string} line_id - the key of the line we're concerned about
+   */
+  function defend(line_id) {
+    let decision
+    let components = line_id.split('')
+    let groupings = {
+      d: diagonals(),
+      v: verticals(),
+      h: horizontals()
+    }
+    let line = groupings[components[0]][line_id]
+    let space = line.findIndex((e) => e != 'x')
+    let offset = Number(components[1]) - 1
+    switch (components[0]) {
+      case 'h':
+        decision = (offset * 3) + space
+        break
+      case 'v':
+        decision = (space * 3) + offset
+        break
+      case 'd':
+        if (components[1] === '1') {
+          decision = space * 4
+        } else if (components[1] === '2') {
+          decision = (space + 1) * 2
+        } else {
+          console.log('Unreachable code has been reached 😱')
+        }
+        break
+      default:
+        console.log("Something went wrong.")
+    }
+    return decision
+  }
+
   function think(difficulty) {
     let decision
     switch (difficulty) {
@@ -212,6 +250,19 @@
           }
         } else {
           // Play somewhere random
+        }
+
+        // Override if there's a potential to lose
+        if (almost_lost()) {
+          let concerns = []
+          Array(horizontals(), verticals(), diagonals()).forEach((line_group) => {
+            Object.entries(line_group).forEach(([id, line]) => {
+              if (lose_potential(line)) {
+                concerns.push(id)
+              }
+            })
+          })
+          decision = defend(concerns[0]) // Make it blindly greedy
         }
         break
       default:
