@@ -234,6 +234,38 @@
     return decision
   }
 
+  function clingy() {
+    let result
+
+    if (last_played) {
+      let around = look_around(last_played)
+      let possible_plays = around.filter((cell) => board[cell] === '_')
+      if (possible_plays === undefined || possible_plays.length == 0) {
+        let current_blanks = find_blanks()
+        result = randomly_pick({ from: current_blanks })
+      } else {
+        result = randomly_pick({ from: possible_plays })
+      }
+    } else {
+      // Play somewhere random
+    }
+
+    // Override if there's a potential to lose
+    if (almost_lost()) {
+      let concerns = []
+      Array(horizontals(), verticals(), diagonals()).forEach((line_group) => {
+        Object.entries(line_group).forEach(([id, line]) => {
+          if (lose_potential(line)) {
+            concerns.push(id)
+          }
+        })
+      })
+      result = defend(concerns[0]) // Make it blindly greedy
+    }
+
+    return result
+  }
+
   function think(difficulty) {
     let decision
     switch (difficulty) {
@@ -243,30 +275,20 @@
         break
       case '2':
         /* The Clingy */
-        if (last_played) {
-          let around = look_around(last_played)
-          let possible_plays = around.filter((cell) => board[cell] === '_')
-          if (possible_plays === undefined || possible_plays.length == 0) {
-            let current_blanks = find_blanks()
-            decision = randomly_pick({ from: current_blanks })
-          } else {
-            decision = randomly_pick({ from: possible_plays })
-          }
+        decision = clingy()
+        break
+      case '3':
+        // For the first move…
+        // Aggressively take the centre if it's free.
+        // Else take one of the corners
+        if (board.filter((cell) => cell != '_').length == 1) {
+          if (board[4] === '_')
+            decision = 4
+          else
+            decision = randomly_pick({ from: [0, 2, 6, 8] })
         } else {
-          // Play somewhere random
-        }
-
-        // Override if there's a potential to lose
-        if (almost_lost()) {
-          let concerns = []
-          Array(horizontals(), verticals(), diagonals()).forEach((line_group) => {
-            Object.entries(line_group).forEach(([id, line]) => {
-              if (lose_potential(line)) {
-                concerns.push(id)
-              }
-            })
-          })
-          decision = defend(concerns[0]) // Make it blindly greedy
+          // Mid game play can be clingy for now
+          decision = clingy()
         }
         break
       default:
