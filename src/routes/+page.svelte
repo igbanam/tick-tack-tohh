@@ -28,6 +28,7 @@
   const announce = (outcome) => scores.announce(outcome)
 
   let new_difficulty = 0
+  let last_played
 
   function resetGame() {
     clearGame()
@@ -57,6 +58,7 @@
 
   function play(e) {
     board[e.detail.position] = 'x'
+    last_played = e.detail.position
     if (won()) {
       let winner = lines().find(in_win_form)[0]
       if (winner === 'x') {
@@ -108,7 +110,10 @@
     ].flat()
   }
 
+  const to_2d = (i) => ({x: i % 3, y: Math.floor(i / 3)})
+  const to_1d = (x, y) => x + 3 * y
   const full_board = () => !board.some(cell => cell === '_')
+  const almost_win = (line) => line.filter((cell) => cell === '_').length == 2
   const in_win_form = (line) => line.every(cell => cell === line[0] && !line.some(cell => cell === '_'))
 
   function horizontals() {
@@ -134,8 +139,84 @@
     ]
   }
 
-  function think() {
-    let decision = board.findIndex((element) => element === '_')
+  function look_around(last_played) {
+    let { x, y } = to_2d(last_played)
+
+    let result = []
+
+    // Left
+    if (x - 1 >= 0) {
+      result.push({x: x - 1, y: y})
+      if (y - 1 >= 0) {
+        result.push({x: x - 1, y: y - 1})
+      }
+      if (y + 1 < 3) {
+        result.push({x: x - 1, y: y + 1})
+      }
+    }
+
+    // Centre
+    if (y - 1 >= 0) {
+      result.push({x: x, y: y - 1})
+    }
+    if (y + 1 < 3) {
+      result.push({x: x, y: y + 1})
+    }
+
+    // Right
+    if (x + 1 < 3) {
+      result.push({x: x + 1, y: y})
+      if (y - 1 >= 0) {
+        result.push({x: x + 1, y: y - 1})
+      }
+      if (y + 1 < 3) {
+        result.push({x: x + 1, y: y + 1})
+      }
+    }
+
+    return result.map(({x, y}) => to_1d(x, y))
+  }
+
+  function randomly_pick({ from }) {
+    return from[Math.floor(Math.random() * from.length)]
+  }
+
+  function find_blanks() {
+    function getAllIndexes(arr, val) {
+      var indexes = [], i = -1;
+      while ((i = arr.indexOf(val, i+1)) != -1){
+        indexes.push(i);
+      }
+      return indexes;
+    }
+    return getAllIndexes(board, '_')
+  }
+
+  function think(difficulty) {
+    let decision
+    switch (difficulty) {
+      case '1':
+        /* The Ignorant */
+        decision = board.findIndex((element) => element === '_')
+        break
+      case '2':
+        /* The Clingy */
+        if (last_played) {
+          let around = look_around(last_played)
+          let possible_plays = around.filter((cell) => board[cell] === '_')
+          if (possible_plays === undefined || possible_plays.length == 0) {
+            let current_blanks = find_blanks()
+            decision = randomly_pick({ from: current_blanks })
+          } else {
+            decision = randomly_pick({ from: possible_plays })
+          }
+        } else {
+          // Play somewhere random
+        }
+        break
+      default:
+        console.log("Unknwown Difficulty")
+    }
     return decision
   }
 

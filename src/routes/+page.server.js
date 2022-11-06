@@ -44,7 +44,7 @@ class TTT {
       this.wins = 0
       this.ties = 0
       this.losses = 0
-      this.difficulty = 1
+      this.difficulty = '1'
       this.board = new Array(9)
       this.board.fill('_')
     }
