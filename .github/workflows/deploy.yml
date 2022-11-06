@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Deployment 🚀
     steps:
-      - uses: fregante/setup-git-user@v1
       - name: Checkout the repository
         uses: actions/checkout@v3
       - name: Install dependencies
@@ -20,4 +19,7 @@ jobs:
           cache: 'yarn'
       - run: yarn install --frozen-lockfile --immutable
       - run: yarn build
-      - run: yarn deploy
+      - run: |
+          git config --global user.name "Igbanam"
+          git config --global user.email "xigbanam@gmail.com"
+          yarn deploy
