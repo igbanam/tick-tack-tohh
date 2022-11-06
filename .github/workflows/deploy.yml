@@ -15,10 +15,9 @@ jobs:
       - name: Install dependencies
         uses: actions/setup-node@v3
         with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           node-version: '16'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile --immutable
       - run: yarn build
       - run: yarn deploy
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
