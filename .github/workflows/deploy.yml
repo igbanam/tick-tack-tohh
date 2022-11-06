@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deployment 🚀
     steps:
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: fregante/setup-git-user@v1
       - name: Checkout the repository
         uses: actions/checkout@v3
       - name: Install dependencies
