@@ -52,8 +52,12 @@
   }
 
   function changeDifficulty(e) {
-    new_difficulty = e.detail.level
-    announce('difficulty_change')
+    if (board.every((cell) => cell === '_')) {
+      difficulty = e.detail.level
+    } else {
+      new_difficulty = e.detail.level
+      announce('difficulty_change')
+    }
   }
 
   function play(e) {
