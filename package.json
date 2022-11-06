@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "vite dev",
-    "deploy": "gh-pages -d ./docs -t true",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
@@ -17,7 +16,6 @@
     "@neoconfetti/svelte": "^1.0.0",
     "@playwright/test": "1.25.0",
     "@sveltejs/adapter-auto": "next",
-    "@sveltejs/adapter-static": "^1.0.0-next.48",
     "@sveltejs/kit": "next",
     "@types/cookie": "^0.5.1",
     "eslint": "^8.16.0",
@@ -32,6 +30,5 @@
   },
   "type": "module",
   "dependencies": {
-    "gh-pages": "^4.0.0"
   }
 }
