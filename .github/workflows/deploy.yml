@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Deployment 🚀
     steps:
+      - run: git config --global user.email "xigbanam@gmail.com"
+      - run: git config --global user.name "Igbanam (from Github Actions)"
       - name: Checkout the repository
         uses: actions/checkout@v3
       - name: Install dependencies
