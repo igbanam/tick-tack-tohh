@@ -1,10 +1,9 @@
-import { default as local_adapter } from '@sveltejs/adapter-auto';
-import { default as prod_adapter } from '@sveltejs/adapter-cloudflare';
+import adapter from '@sveltejs/adapter-auto';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   kit: {
-    adapter: import.meta.env.DEV ? local_adapter() : prod_adapter()
+    adapter: adapter()
   }
 };
 
