@@ -6,7 +6,7 @@ Tick Tack Tohh is my version of the famous Tic Tac Toe game. The game is played 
 
 - **The Ignorant**: also known as _The Blind Seeker_
 - **The Clingy**: my interpretation of the _Overly-attached Girlfriend_
-- **iGbanam iGravity**: my level—supposedly unbeatable (:
+- **iGbanam iGravity**: my level—supposedly unbeatable (: 
 
 ### How to play
 
